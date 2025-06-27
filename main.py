@@ -182,6 +182,7 @@ def zrownoleglenie_window_open(canvas):
 
         ttk.Button(frame,text="Dodaj", command=dodaj).grid(row=4,column=1,padx=5,pady=5)
 def wyswietl_uniterm_zrownoleglenie(canvas, uniterm, dx=0, dy=0):
+
             offset_x = uniterm["offset_x"]  # szerokość haczyka poziomo
             offset_y = uniterm["offset_y"]# przesunięcie haczyków pionowo
 
@@ -210,8 +211,7 @@ def wyswietl_uniterm_zrownoleglenie(canvas, uniterm, dx=0, dy=0):
                                fill="blue")  # pionowa linia
             canvas.create_line(x, y_end - odstep + offset_y, x + offset_x, y_end - odstep + offset_y, width=2,
                                tags="uniterm2", fill="blue")  # dolny haczyk
-def merge(canvas):
-
+def merge(canvas, a):
     merged_uniterm = zrownoleglenie_uniterm.copy()
     merged_uniterm["linie"]  = zrownoleglenie_uniterm["linie"][:]
     merged_uniterm["offset_y"] += 10
@@ -219,8 +219,6 @@ def merge(canvas):
     czcionkaLower = font.Font(family="Arial", size=12)
     #sekwencja_unitermCopy["czcionka"] = czcionkaLower
     merged_uniterm["odstep"] +=10
-
-    a = 1
 
     if(a == 1):
         merged_uniterm["linie"][0] = ""
@@ -237,6 +235,41 @@ def merge(canvas):
         wyswietl_uniterm_zrownoleglenie(canvas, merged_uniterm, dx=200, dy=50)
         wyswietl_uniterm_sekwencja(canvas,sekwencja_unitermCopy,dx=210, dy=210)
         canvas.create_line(100, 80, 220, 240, arrow=tk.LAST, width=5, fill="red")
+
+
+def openMergeWindow(canvas):
+    okno3 = tk.Toplevel()
+    okno3.title("MergeUniterm")
+    x = 300
+    y = 200
+    root.update_idletasks()
+    main_x = root.winfo_x()
+    main_y = root.winfo_y()
+    main_width = root.winfo_width()
+    main_height = root.winfo_height()
+
+    pos_x = main_x + (main_width // 2) - (x // 2)
+    pos_y = main_y + (main_height // 2) - (y // 2)
+
+    # Ustaw rozmiar i pozycję
+    okno3.geometry(f"{x}x{y}+{pos_x}+{pos_y}")
+
+    # Etykiety
+    frame = ttk.Frame(okno3, padding=10)
+    frame.pack(expand=True, fill="both")
+
+    # Wyrazenie A
+
+    ttk.Label(frame, text="Operacja").grid(row=2, column=0, sticky="e", padx=5, pady=5)
+    separator_var = tk.StringVar(value=";")
+
+    radio_frame = ttk.Frame(frame)
+    radio_frame.grid(row=2, column=1, sticky="e", padx=5, pady=5)
+    value = tk.IntVar(value=1)
+    ttk.Radiobutton(radio_frame, text="A", variable= value, value=1).pack(side="left", padx=5, pady=5)
+    ttk.Radiobutton(radio_frame, text="B", variable =value, value=2).pack(side="left", padx=5, pady=5)
+    ttk.Radiobutton(radio_frame, text="C", variable = value, value=3).pack(side="left", padx=5, pady=5)
+    ttk.Button(frame, text="Zamien", command=lambda: (merge(canvas,value.get()),okno3.destroy())).grid(row=3, column=1, padx=5, pady=5)
 
 
 # Inicjalizacja głównego okna
@@ -280,7 +313,7 @@ right_panel.pack(side='right', fill='y', padx=5)
 # Przyciski
 ttk.Button(right_panel, text="Sekwencjonuj", command=lambda: sekwencja_window_open(center_canvas)).pack(pady=5)
 ttk.Button(right_panel, text="Zrównoleglenie", command=lambda: zrownoleglenie_window_open(center_canvas)).pack(pady=5)
-ttk.Button(right_panel, text="Merge", command=lambda: merge(center_canvas)).pack(pady=5)
+ttk.Button(right_panel, text="Merge", command=lambda: openMergeWindow(center_canvas)).pack(pady=5)
 
 # Czcionka i rozmiar
 ttk.Label(right_panel, text="Czcionka").pack(pady=(10, 0))

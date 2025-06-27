@@ -218,12 +218,25 @@ def merge(canvas):
     sekwencja_unitermCopy = sekwencja_uniterm.copy()
     czcionkaLower = font.Font(family="Arial", size=12)
     #sekwencja_unitermCopy["czcionka"] = czcionkaLower
-    canvas.create_line(100, 80, 220, 110, arrow=tk.LAST, width=5, fill="green")
-    canvas.create_line(100,80,220,160, arrow=tk.LAST, width=5, fill="blue")
-    canvas.create_line(100, 80, 220, 210, arrow=tk.LAST, width=5, fill="red")
-    merged_uniterm["linie"][0] = ""
-    wyswietl_uniterm_zrownoleglenie(canvas, merged_uniterm, dx=200, dy=50)
-    wyswietl_uniterm_sekwencja(canvas,sekwencja_unitermCopy,dx=210, dy=50)
+    merged_uniterm["odstep"] +=10
+
+    a = 1
+
+    if(a == 1):
+        merged_uniterm["linie"][0] = ""
+        wyswietl_uniterm_zrownoleglenie(canvas, merged_uniterm, dx=200, dy=50)
+        wyswietl_uniterm_sekwencja(canvas,sekwencja_unitermCopy,dx=210, dy=60)
+        canvas.create_line(100, 80, 220, 110, arrow=tk.LAST, width=5, fill="green")
+    elif(a == 2):
+        merged_uniterm["linie"][2] = ""
+        wyswietl_uniterm_zrownoleglenie(canvas, merged_uniterm, dx=200, dy=50)
+        wyswietl_uniterm_sekwencja(canvas, sekwencja_unitermCopy, dx=210, dy=135)
+        canvas.create_line(100, 80, 220, 180, arrow=tk.LAST, width=5, fill="blue")
+    elif(a ==3):
+        merged_uniterm["linie"][4] = ""
+        wyswietl_uniterm_zrownoleglenie(canvas, merged_uniterm, dx=200, dy=50)
+        wyswietl_uniterm_sekwencja(canvas,sekwencja_unitermCopy,dx=210, dy=210)
+        canvas.create_line(100, 80, 220, 240, arrow=tk.LAST, width=5, fill="red")
 
 
 # Inicjalizacja głównego okna

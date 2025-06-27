@@ -1,9 +1,12 @@
+import copy
 import tkinter as tk
 from tkinter import ttk, font
+
 
 def sekwencja_window_open(canvas):
 
         def dodaj():
+            canvas.delete("uniterm1")
             a = entry_a.get()
             b = entry_b.get()
             sep = separator_var.get()
@@ -11,17 +14,17 @@ def sekwencja_window_open(canvas):
             tekst = f"{a} {sep} {b}"
             czcionka = font.Font(family="Arial", size=16)
             szerokosc_tekstu = czcionka.measure(tekst)
-            canvas.delete(tk.ALL)
+            #canvas.delete(tk.ALL)
             canvas.update_idletasks()
             x = 30
             y = 50
 
             wysokosc_nawiasu = 10
-            text = canvas.create_text(x, y, text=tekst, anchor="nw", font=czcionka)
+            #text = canvas.create_text(x, y, text=tekst, anchor="nw", font=czcionka)
 
-            arch = canvas.create_arc(x, y - wysokosc_nawiasu,
-                              x + szerokosc_tekstu, y+5,
-                              start=0, extent=180, style='arc', width=2,outline="blue")
+            #arch = canvas.create_arc(x, y - wysokosc_nawiasu,
+                             # x + szerokosc_tekstu, y+5,
+                              #start=0, extent=180, style='arc', width=2,outline="blue")
 
             # Zapis metadanych
             global sekwencja_uniterm
@@ -32,26 +35,13 @@ def sekwencja_window_open(canvas):
                     "y": y,
                     "szerokosc_tekstu": szerokosc_tekstu,
                     "wysokosc_nawiasu": wysokosc_nawiasu,
-                    "text": text,
-                    "arch": arch
+                    #"text": text,
+                    #"arch": arch
             }
 
-            wyswietl_uniterm(canvas, sekwencja_uniterm,dx=200,dy=0)
-
+            wyswietl_uniterm_sekwencja(canvas, sekwencja_uniterm,dx=0,dy=0)
 
             okno.destroy()
-        def wyswietl_uniterm(canvas, uniterm,dx = 0, dy = 0):
-                x = uniterm["x"]+dx
-                y = uniterm["y"]+dy
-                tekst = uniterm["tekst"]
-                czcionka = uniterm["czcionka"]
-                szerokosc_tekstu = uniterm["szerokosc_tekstu"]
-                wysokosc_nawiasu = uniterm["wysokosc_nawiasu"]
-
-                canvas.create_text(x,y, text=tekst, anchor="nw", font=czcionka)
-                canvas.create_arc(x, y - wysokosc_nawiasu,
-                                         x + szerokosc_tekstu, y + 5,
-                                         start=0, extent=180, style='arc', width=2, outline="blue")
 
         okno = tk.Toplevel()
         okno.title("AddUniterm")
@@ -94,10 +84,58 @@ def sekwencja_window_open(canvas):
         ttk.Radiobutton(radio_frame,text=",",variable=separator_var,value=",").pack(side="left",padx=5,pady=5)
 
         ttk.Button(frame,text="Dodaj", command=dodaj).grid(row=3,column=1,padx=5,pady=5)
+def wyswietl_uniterm_sekwencja(canvas, uniterm,dx = 0, dy = 0):
+                x = uniterm["x"]+dx
+                y = uniterm["y"]+dy
+                tekst = uniterm["tekst"]
+                czcionka = uniterm["czcionka"]
+                szerokosc_tekstu = uniterm["szerokosc_tekstu"]
+                wysokosc_nawiasu = uniterm["wysokosc_nawiasu"]
+
+                canvas.create_text(x,y, text=tekst, anchor="nw", font=czcionka, tags="uniterm1")
+                canvas.create_arc(x, y - wysokosc_nawiasu,
+                                         x + szerokosc_tekstu, y + 5,
+                                         start=0, extent=180, style='arc', width=2, outline="blue",tags="uniterm1")
 
 
+def zrownoleglenie_window_open(canvas):
 
-def zrownoleglenie_window_open():
+        def dodaj():
+            canvas.delete("uniterm")  # Usuwa poprzedni, jeśli trzeba
+            a = entry_a.get()
+            b = entry_b.get()
+            c = entry_c.get()
+            sep = separator_var.get()
+            tekst = f"{a} {sep} {b} {sep} {c}"
+            czcionka = font.Font(family="Arial", size=16)
+            wysokosc_tekstu = czcionka.metrics("linespace")
+            odstep = 5
+            linie = [a,sep,b,sep,c]
+            offset = 10
+
+            #canvas.update_idletasks()
+            x = 30
+            y = 50
+
+            odstep_nawiasu = 10
+
+            # Zapis metadanych
+            global zrownoleglenie_uniterm
+            zrownoleglenie_uniterm = {
+                "linie": linie,
+                "czcionka": czcionka,
+                "x": x,
+                "y": y,
+                "wysokosc_tekstu": wysokosc_tekstu,
+                "offset_x": 10,
+                "offset_y": 5,
+                "odstep": odstep,
+            }
+
+
+            wyswietl_uniterm_zrownoleglenie(canvas, zrownoleglenie_uniterm, dx=0, dy=200)
+            okno2.destroy()
+
         okno2 = tk.Toplevel()
         okno2.title("AddUniterm")
         x = 300
@@ -142,11 +180,56 @@ def zrownoleglenie_window_open():
         ttk.Radiobutton(radio_frame, text=";", variable=separator_var,value=";").pack(side="left",padx=5,pady=5)
         ttk.Radiobutton(radio_frame,text=",",variable=separator_var,value=",").pack(side="left",padx=5,pady=5)
 
-        ttk.Button(frame,text="Dodaj").grid(row=4,column=1,padx=5,pady=5)
+        ttk.Button(frame,text="Dodaj", command=dodaj).grid(row=4,column=1,padx=5,pady=5)
+def wyswietl_uniterm_zrownoleglenie(canvas, uniterm, dx=0, dy=0):
+            offset_x = uniterm["offset_x"]  # szerokość haczyka poziomo
+            offset_y = uniterm["offset_y"]# przesunięcie haczyków pionowo
+
+            x = uniterm["x"] + dx
+            y = uniterm["y"] + dy
+            linie = uniterm["linie"]
+            czcionka = uniterm["czcionka"]
+            wysokosc_tekstu = uniterm["wysokosc_tekstu"]
+            odstep = uniterm["odstep"]
+
+            y_start = y
+            y_end = y
+            szerokosc_max = 0
+
+            # Wyświetl każdą linię w pionie
+            for linia in linie:
+                text_id = canvas.create_text(x + 20, y_end, text=linia, anchor="nw", font=czcionka, tags="uniterm")
+                szerokosc = czcionka.measure(linia)
+                szerokosc_max = max(szerokosc_max, szerokosc)
+                y_end += wysokosc_tekstu + odstep
+
+
+            canvas.create_line(x + offset_x, y_start - offset_y, x, y_start - offset_y, width=2, tags="uniterm2",
+                              fill="blue")  # górny haczyk
+            canvas.create_line(x, y_start - offset_y, x, y_end - odstep + offset_y, width=2, tags="uniterm2",
+                               fill="blue")  # pionowa linia
+            canvas.create_line(x, y_end - odstep + offset_y, x + offset_x, y_end - odstep + offset_y, width=2,
+                               tags="uniterm2", fill="blue")  # dolny haczyk
+def merge(canvas):
+
+    merged_uniterm = zrownoleglenie_uniterm.copy()
+    merged_uniterm["linie"]  = zrownoleglenie_uniterm["linie"][:]
+    merged_uniterm["offset_y"] += 10
+    sekwencja_unitermCopy = sekwencja_uniterm.copy()
+    czcionkaLower = font.Font(family="Arial", size=12)
+    #sekwencja_unitermCopy["czcionka"] = czcionkaLower
+    canvas.create_line(100, 80, 220, 110, arrow=tk.LAST, width=5, fill="green")
+    canvas.create_line(100,80,220,160, arrow=tk.LAST, width=5, fill="blue")
+    canvas.create_line(100, 80, 220, 210, arrow=tk.LAST, width=5, fill="red")
+    merged_uniterm["linie"][0] = ""
+    wyswietl_uniterm_zrownoleglenie(canvas, merged_uniterm, dx=200, dy=50)
+    wyswietl_uniterm_sekwencja(canvas,sekwencja_unitermCopy,dx=210, dy=50)
+
 
 # Inicjalizacja głównego okna
+
 root = tk.Tk()
-root.title("Uniprogram")
+root.title("Unitermy")
 width = 1200
 height = 600
 root.geometry(f"{width}x{height}")
@@ -183,7 +266,8 @@ right_panel.pack(side='right', fill='y', padx=5)
 
 # Przyciski
 ttk.Button(right_panel, text="Sekwencjonuj", command=lambda: sekwencja_window_open(center_canvas)).pack(pady=5)
-ttk.Button(right_panel, text="Zrównoleglenie", command=zrownoleglenie_window_open).pack(pady=5)
+ttk.Button(right_panel, text="Zrównoleglenie", command=lambda: zrownoleglenie_window_open(center_canvas)).pack(pady=5)
+ttk.Button(right_panel, text="Merge", command=lambda: merge(center_canvas)).pack(pady=5)
 
 # Czcionka i rozmiar
 ttk.Label(right_panel, text="Czcionka").pack(pady=(10, 0))

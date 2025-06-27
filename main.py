@@ -2,44 +2,26 @@ import copy
 import tkinter as tk
 from tkinter import ttk, font
 
+from SekZroMerge import SekZroMerge
+from UnitermZrownoleglenie import UnitermZrownoleglenie
+from UnitermSekwencja import UnitermSekwencja
+
 
 def sekwencja_window_open(canvas):
 
         def dodaj():
-            canvas.delete("uniterm1")
+            canvas.delete("Uniterm1")
             a = entry_a.get()
             b = entry_b.get()
             sep = separator_var.get()
-
             tekst = f"{a} {sep} {b}"
-            czcionka = font.Font(family="Arial", size=16)
-            szerokosc_tekstu = czcionka.measure(tekst)
-            #canvas.delete(tk.ALL)
-            canvas.update_idletasks()
             x = 30
             y = 50
-
+            czcionka = font.Font(family="Arial", size=16)
             wysokosc_nawiasu = 10
-            #text = canvas.create_text(x, y, text=tekst, anchor="nw", font=czcionka)
-
-            #arch = canvas.create_arc(x, y - wysokosc_nawiasu,
-                             # x + szerokosc_tekstu, y+5,
-                              #start=0, extent=180, style='arc', width=2,outline="blue")
-
-            # Zapis metadanych
             global sekwencja_uniterm
-            sekwencja_uniterm = {
-                    "tekst": tekst,
-                    "czcionka": czcionka,
-                    "x": x,
-                    "y": y,
-                    "szerokosc_tekstu": szerokosc_tekstu,
-                    "wysokosc_nawiasu": wysokosc_nawiasu,
-                    #"text": text,
-                    #"arch": arch
-            }
-
-            wyswietl_uniterm_sekwencja(canvas, sekwencja_uniterm,dx=0,dy=0)
+            sekwencja_uniterm = UnitermSekwencja(x,y,czcionka, tekst,wysokosc_nawiasu)
+            sekwencja_uniterm.draw(canvas, dx=0, dy=0,tag="Uniterm1")
 
             okno.destroy()
 
@@ -101,39 +83,27 @@ def wyswietl_uniterm_sekwencja(canvas, uniterm,dx = 0, dy = 0):
 def zrownoleglenie_window_open(canvas):
 
         def dodaj():
-            canvas.delete("uniterm")  # Usuwa poprzedni, jeśli trzeba
+            canvas.delete("Uniterm2")
             a = entry_a.get()
             b = entry_b.get()
             c = entry_c.get()
             sep = separator_var.get()
-            tekst = f"{a} {sep} {b} {sep} {c}"
             czcionka = font.Font(family="Arial", size=16)
-            wysokosc_tekstu = czcionka.metrics("linespace")
+            linie = [a, sep, b, sep, c]
             odstep = 5
-            linie = [a,sep,b,sep,c]
-            offset = 10
 
-            #canvas.update_idletasks()
-            x = 30
-            y = 50
-
-            odstep_nawiasu = 10
-
-            # Zapis metadanych
             global zrownoleglenie_uniterm
-            zrownoleglenie_uniterm = {
-                "linie": linie,
-                "czcionka": czcionka,
-                "x": x,
-                "y": y,
-                "wysokosc_tekstu": wysokosc_tekstu,
-                "offset_x": 10,
-                "offset_y": 5,
-                "odstep": odstep,
-            }
+            zrownoleglenie_uniterm = UnitermZrownoleglenie(
+                linie=linie,
+                x=30,
+                y=50,
+                czcionka=czcionka,
+                odstep=odstep,
+                offset_x=10,
+                offset_y=5
+            )
 
-
-            wyswietl_uniterm_zrownoleglenie(canvas, zrownoleglenie_uniterm, dx=0, dy=200)
+            zrownoleglenie_uniterm.draw(canvas, dx=0, dy=200,tag="Uniterm2")
             okno2.destroy()
 
         okno2 = tk.Toplevel()
@@ -181,63 +151,15 @@ def zrownoleglenie_window_open(canvas):
         ttk.Radiobutton(radio_frame,text=",",variable=separator_var,value=",").pack(side="left",padx=5,pady=5)
 
         ttk.Button(frame,text="Dodaj", command=dodaj).grid(row=4,column=1,padx=5,pady=5)
-def wyswietl_uniterm_zrownoleglenie(canvas, uniterm, dx=0, dy=0):
 
-            offset_x = uniterm["offset_x"]  # szerokość haczyka poziomo
-            offset_y = uniterm["offset_y"]# przesunięcie haczyków pionowo
-
-            x = uniterm["x"] + dx
-            y = uniterm["y"] + dy
-            linie = uniterm["linie"]
-            czcionka = uniterm["czcionka"]
-            wysokosc_tekstu = uniterm["wysokosc_tekstu"]
-            odstep = uniterm["odstep"]
-
-            y_start = y
-            y_end = y
-            szerokosc_max = 0
-
-            # Wyświetl każdą linię w pionie
-            for linia in linie:
-                text_id = canvas.create_text(x + 20, y_end, text=linia, anchor="nw", font=czcionka, tags="uniterm")
-                szerokosc = czcionka.measure(linia)
-                szerokosc_max = max(szerokosc_max, szerokosc)
-                y_end += wysokosc_tekstu + odstep
-
-
-            canvas.create_line(x + offset_x, y_start - offset_y, x, y_start - offset_y, width=2, tags="uniterm2",
-                              fill="blue")  # górny haczyk
-            canvas.create_line(x, y_start - offset_y, x, y_end - odstep + offset_y, width=2, tags="uniterm2",
-                               fill="blue")  # pionowa linia
-            canvas.create_line(x, y_end - odstep + offset_y, x + offset_x, y_end - odstep + offset_y, width=2,
-                               tags="uniterm2", fill="blue")  # dolny haczyk
 def merge(canvas, a):
-    merged_uniterm = zrownoleglenie_uniterm.copy()
-    merged_uniterm["linie"]  = zrownoleglenie_uniterm["linie"][:]
-    merged_uniterm["offset_y"] += 10
-    sekwencja_unitermCopy = sekwencja_uniterm.copy()
-    czcionkaLower = font.Font(family="Arial", size=12)
-    #sekwencja_unitermCopy["czcionka"] = czcionkaLower
-    merged_uniterm["odstep"] +=10
 
-    if(a == 1):
-        merged_uniterm["linie"][0] = ""
-        wyswietl_uniterm_zrownoleglenie(canvas, merged_uniterm, dx=200, dy=50)
-        wyswietl_uniterm_sekwencja(canvas,sekwencja_unitermCopy,dx=210, dy=60)
-        canvas.create_line(100, 80, 220, 110, arrow=tk.LAST, width=5, fill="green")
-    elif(a == 2):
-        merged_uniterm["linie"][2] = ""
-        wyswietl_uniterm_zrownoleglenie(canvas, merged_uniterm, dx=200, dy=50)
-        wyswietl_uniterm_sekwencja(canvas, sekwencja_unitermCopy, dx=210, dy=135)
-        canvas.create_line(100, 80, 220, 180, arrow=tk.LAST, width=5, fill="blue")
-    elif(a ==3):
-        merged_uniterm["linie"][4] = ""
-        wyswietl_uniterm_zrownoleglenie(canvas, merged_uniterm, dx=200, dy=50)
-        wyswietl_uniterm_sekwencja(canvas,sekwencja_unitermCopy,dx=210, dy=210)
-        canvas.create_line(100, 80, 220, 240, arrow=tk.LAST, width=5, fill="red")
+    mergedUniterm = SekZroMerge(zrownoleglenie_uniterm, sekwencja_uniterm,a)
+    mergedUniterm.draw(canvas,tag="Merged")
 
 
 def openMergeWindow(canvas):
+    canvas.delete("Merged")
     okno3 = tk.Toplevel()
     okno3.title("MergeUniterm")
     x = 300

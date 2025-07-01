@@ -271,7 +271,7 @@ def wczytaj_z_listy(nazwa,canvas):
             "merged_choice": row[2]
         }
     if dane:
-        # Tworzysz obiekty na podstawie tych danych
+        # Stworz obiekt
         czcionka_zrow = font.Font(family=dane["zrownoleglenie"]["czcionka"][0],
                                   size=dane["zrownoleglenie"]["czcionka"][1])
         global zrownoleglenie_uniterm,sekwencja_uniterm
@@ -294,11 +294,12 @@ def wczytaj_z_listy(nazwa,canvas):
             wysokosc_nawiasu=dane["sekwencja"]["wysokosc_nawiasu"]
         )
 
-        # Teraz możesz np. wyświetlić je na canvasie
+        # Wyswietlenie na canvas
         zrownoleglenie_uniterm.draw(canvas, dx=0, dy=200, tag="Uniterm2")
         sekwencja_uniterm.draw(canvas, dx=0, dy=0, tag="Uniterm1")
         current_merged_choice = dane["merged_choice"]
         merge(canvas, current_merged_choice)
+
 def on_lisbox_select(event):
     indeks = event.widget.curselection()
     if indeks:
@@ -320,7 +321,7 @@ def pokaz_opis(event):
 
         def usun():
             if messagebox.askyesno("Potwierdzenie",
-                                   f"Czy na pewno chcesz usunac uniterm  '{nazwa}'?"):
+                                   f"Czy na pewno chcesz usunąć uniterm  '{nazwa}'?"):
                 with sqlite3.connect(DB_PATH) as conn:
                     cursor = conn.cursor()
                     cursor.execute("DELETE FROM unitermy WHERE nazwa=?",(nazwa,))
@@ -346,8 +347,9 @@ opisy = {}
 uniterm_data = {}
 global last_merged_choice
 last_merged_choice = None
-# Inicjalizacja głównego okna
 
+
+# Inicjalizacja głównego okna
 root = tk.Tk()
 root.title("Unitermy")
 width = 1200
@@ -368,7 +370,7 @@ root.config(menu=menu_bar)
 main_frame = ttk.Frame(root)
 main_frame.pack(fill='both', expand=True, padx=5, pady=5)
 
-# Lewy panel (np. lista lub pusta kolumna)
+# Lewy panel
 left_panel = ttk.Frame(main_frame, width=100)
 left_panel.pack(side='left', fill='y')
 label = ttk.Label(left_panel, text="Lista Unitermów", font=("Arial", 12, "bold"))
@@ -413,7 +415,7 @@ size_box.pack()
 ttk.Button(right_panel, text="Odśwież").pack(pady=10)
 ttk.Button(right_panel, text="Wyczyść",command=clear_all).pack(pady=5)
 
-# ===== DOLNY PANEL (Nazwa + Opis) =====
+# ===== DOLNY PANEL =====
 bottom_frame = ttk.Frame(root)
 bottom_frame.pack(fill='x', padx=5, pady=5)
 

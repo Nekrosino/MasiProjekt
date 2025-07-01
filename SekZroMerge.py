@@ -1,12 +1,11 @@
 import copy
 import tkinter as tk
-from tkinter import ttk, font
 from UnitermSekwencja import UnitermSekwencja
 from UnitermZrownoleglenie import UnitermZrownoleglenie
 
 class SekZroMerge:
     def __init__(self, zrownoleglenie_uniterm, sekwencja_uniterm, a):
-        # Tworzymy nowy obiekt tej samej klasy, kopiując dane:
+        # nowy obiekt tej samej klasy, kopiując dane:
         self.zrownoleglenie_uniterm = UnitermZrownoleglenie(
             linie=copy.deepcopy(zrownoleglenie_uniterm.linie),
             x=zrownoleglenie_uniterm.x,

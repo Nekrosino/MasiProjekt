@@ -1,4 +1,4 @@
-from PIL.ImageChops import offset
+
 
 from Uniterm import Uniterm
 

@@ -174,7 +174,7 @@ def openMergeWindow(canvas):
 
     ttk.Label(frame, text="Operacja").grid(row=2, column=0, sticky="e", padx=5, pady=5)
     separator_var = tk.StringVar(value=";")
-    value = tk.IntVar(value=1)
+    value = tk.IntVar()
     def on_radio_change():
         global last_merged_choice
         last_merged_choice = value.get()
@@ -241,6 +241,7 @@ def dodaj_do_listy():
                 last_merged_choice
             ))
             conn.commit()
+            last_merged_choice = None
 
         name_entry.delete(0, tk.END)
         desc_entry.delete(0, tk.END)
@@ -356,16 +357,6 @@ width = 1200
 height = 600
 root.geometry(f"{width}x{height}")
 
-# ===== MENU GÓRNE =====
-menu_bar = tk.Menu(root)
-file_menu = tk.Menu(menu_bar, tearoff=0)
-file_menu.add_command(label="Otwórz")
-file_menu.add_command(label="Zapisz")
-file_menu.add_separator()
-file_menu.add_command(label="Zamknij", command=root.quit)
-menu_bar.add_cascade(label="Plik", menu=file_menu)
-root.config(menu=menu_bar)
-
 # ===== GŁÓWNA RAMKA =====
 main_frame = ttk.Frame(root)
 main_frame.pack(fill='both', expand=True, padx=5, pady=5)
@@ -397,23 +388,11 @@ right_panel.pack(side='right', fill='y', padx=5)
 
 # Przyciski
 ttk.Button(right_panel, text="Sekwencjonuj", command=lambda: sekwencja_window_open(center_canvas)).pack(pady=5)
-ttk.Button(right_panel, text="Zrównoleglenie", command=lambda: zrownoleglenie_window_open(center_canvas)).pack(pady=5)
-ttk.Button(right_panel, text="Merge", command=lambda: openMergeWindow(center_canvas)).pack(pady=5)
-
-# Czcionka i rozmiar
-ttk.Label(right_panel, text="Czcionka").pack(pady=(10, 0))
-font_box = ttk.Combobox(right_panel, values=sorted(font.families()))
-font_box.set("Arial")
-font_box.pack()
-
-ttk.Label(right_panel, text="Rozmiar czcionki").pack(pady=(10, 0))
-size_box = ttk.Combobox(right_panel, values=[8, 10, 12, 14, 16, 18, 20])
-size_box.set("12")
-size_box.pack()
+ttk.Button(right_panel, text="Zrównoleglenie", command=lambda: zrownoleglenie_window_open(center_canvas)).pack(pady=10)
+ttk.Button(right_panel, text="Merge", command=lambda: openMergeWindow(center_canvas)).pack(pady=10)
 
 # Dodatkowe przyciski
-ttk.Button(right_panel, text="Odśwież").pack(pady=10)
-ttk.Button(right_panel, text="Wyczyść",command=clear_all).pack(pady=5)
+ttk.Button(right_panel, text="Wyczyść",command=clear_all).pack( side= "bottom",pady=5)
 
 # ===== DOLNY PANEL =====
 bottom_frame = ttk.Frame(root)
